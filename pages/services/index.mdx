@@ -1,5 +1,35 @@
 import { Callout } from 'nextra-theme-docs'
 
 <Callout type='error'>
-  Nothing to put here ¯\_(ツ)_/¯
+  In-development / writing
 </Callout>
+
+# Introduction
+
+Welcome! It's great to see you here looking to learn about services.
+
+Services are a way to access a plethora of function that are essential for your game. This is useful for things like database connections, API clients, and more.
+
+## Retrieving a service
+
+To retrieve a service, you can use the following code:
+
+```lua filename="somescript.lua"
+  local service = game:GetService("ServiceName")
+```
+
+As you can see, it's really easy to retrieve a service! Although not as widely used, these are still valid ways to retrieve a service:
+
+```lua filename="somescript.lua"
+  local service = game.ServiceName
+  local service = game:WaitForChild("ServiceName")
+```
+
+But it's better to use the first method, as it's more reliable and up-to-date.
+
+## List of services
+
+We're still working on this, so please be paitent while we write it!
+
+In the meantime, you can find a full list of services [here](https://create.roblox.com/docs/reference/engine/classes) -> only check out the 'Classes tab' and bear in mind that services
+will always end with 'Service'; there are other classes in there so make sure you're looking at the right one.
