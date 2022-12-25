@@ -14,12 +14,9 @@ const config: DocsThemeConfig = {
     <meta property="og:description" content="Roblox Documents in depth" />
   </>),
 
-  docsRepositoryBase: 'https://github.com/shuding/nextra-docs-template',
-
   toc: { float: true },
   search: { loading: 'Tring to look...', placeholder: 'Search: Luau is the best 😎' },
 
-  project: { link: 'https://github.com/shuding/nextra-docs-template', },
   footer: { text: 'Roblox Luau Docs Reimagined | under the MIT license', },
 }
 
