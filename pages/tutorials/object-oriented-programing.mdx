@@ -1,0 +1,344 @@
+# Object Oriented Programming
+
+*Thank you [github copilot](https://github.com/features/copilot) for helping me writing this :3*
+
+## Summary
+Object Oriented Programming (OOP) is a programming paradigm that uses objects and their interactions to design and program applications. The main goal of OOP is to bind together the data and the functions that operate on them so that no other part of the code can access this data except that function.
+
+## Parts of OOP
+### What is an Object?
+An object is a software bundle of related state and behavior. Software objects are often used to model the real-world objects that you find in everyday life. For example, a dog is an object. It has state (color, name, breed, hungry) and behavior (bark, eat, wag tail). An object stores its state in fields (variables in some programming languages) and exposes its behavior through methods (functions in some programming languages). Methods operate on an object's internal state and serve as the primary mechanism for object-to-object communication.
+
+### What is a Class?
+A class is a blueprint for the object. A class encapsulates data for the object.
+
+## OOP Principles
+### Abstraction
+Abstraction is the process of hiding the implementation details and showing only functionality to the user. In other words, the user will have the information on what the object does instead of how it does it.
+
+### Encapsulation
+Encapsulation is the wrapping up of data under a single unit. It is the mechanism that binds together code and the data it manipulates. In encapsulation, the variables or data of a class is hidden from any other class and can be accessed only through any member function of own class in which they are declared.
+
+### Polymorphism
+Polymorphism is the ability of a message to be displayed in more than one form. In simple words, we can define polymorphism as the ability of a variable to take more than one form. Polymorphism is considered as one of the important features of Object Oriented Programming. Polymorphism is used to perform a single action in different ways. Polymorphism is derived from two Greek words: poly and morphs. The word "poly" means many and "morphs" means forms. Thus, polymorphism means many forms.
+
+### Inheritance
+Inheritance is a way to form new classes using classes that have already been defined. The newly formed classes are called derived classes, the classes that we derive from are called base classes. Important benefits of inheritance are code reusability and reduction of complexity of a program. The derived classes (descendants) inherit the members of the base classes (ancestors).
+
+## TLDR
+OOP is a programming paradigm that uses objects and their interactions to design and program applications. The main goal of OOP is to bind together the data and the functions that operate on them so that no other part of the code can access this data except that function. An object is a software bundle of related state and behavior. A class is a blueprint for the object. A class encapsulates data for the object. Abstraction is the process of hiding the implementation details and showing only functionality to the user. Encapsulation is the wrapping up of data under a single unit. Polymorphism is the ability of a message to be displayed in more than one form. Inheritance is a way to form new classes using classes that have already been defined.
+
+__Did you know__ *You've have used OOP without you knowing it. Every object/instance uses OOP such as changing a part's color or moving their position*
+
+## Creating your First OOP Module!
+<div className="steps-container">
+  ### Creating a new module script
+  You would create an ModuleScript inside of a very generic place like ReplicatedStorage. Viewing the ModuleScript would have the pre-inserted code:
+
+  ```lua {1-3} filename="ReplicatedStorage/ModuleScript.lua"
+  local module = {}
+
+  return module
+  ```
+
+  ### Creating a new class
+  You would rename the defined `module = {}` to any class name you desire. aka: `myCoolClass = {}`. You should get something like this:
+
+  ```lua {1,3} filename="ReplicatedStorage/ModuleScript.lua"
+  local myCoolClass = {}
+
+  return myCoolClass
+  ```
+
+  ### Using metamethods
+  Metamethods are require on making a new class. Learn more about [metamethods](/tutorials/metamethods).
+
+  ```lua {2} filename="ReplicatedStorage/ModuleScript.lua"
+  local myCoolClass = {}
+  myCoolClass.__index = myCoolClass
+
+  return myCoolClass
+  ```
+
+  ### Creating a new instance
+  Creating a new instance is fairly simple, you would write a function thats written like `function myCoolClass.new(args,...)`
+
+  Then you would define the `self` variable and set it to `setmetatable({}, myCoolClass)`. The reason why we would set it to the `myCoolClass` as the metatable is because inside the `myCoolClass` table we've defined .__index, so we are using it for the __index metamethod.
+
+  *You can also just write `{__index = myCoolClass}` too if you dont want to write `myCoolClass.__index = myCoolClass` at the very top.*
+
+  ```lua {4-10} filename="ReplicatedStorage/ModuleScript.lua"
+  local myCoolClass = {}
+  myCoolClass.__index = myCoolClass
+
+  function myCoolClass.new(string)
+    local self = setmetatable({}, myCoolClass)
+
+    self.Text = string
+
+    return self
+  end
+
+  return myCoolClass
+  ```
+
+  ### Making a new method
+  Methods are a bit different from the constructor functions. The reason is one the method function uses a `:` while the constructor uses a `.`. The `:` is used to define the `self` variable. The `self` variable is used to define the instance of the class. You can also use `self` to define the instance's properties.
+
+  ```lua {12-14} filename="ReplicatedStorage/ModuleScript.lua"
+  local myCoolClass = {}
+  myCoolClass.__index = myCoolClass
+
+  function myCoolClass.new(string)
+    local self = setmetatable({}, myCoolClass)
+
+    self.Text = string
+
+    return self
+  end
+
+  function myCoolClass:PrintText()
+    print(self.Text)
+  end
+
+  return myCoolClass
+  ```
+
+  ### Using the class
+  Congratulations! You have successfully created your first OOP module!
+
+  Heres a quick example of how to use the class:
+
+  ```lua {1-5} filename="ServerScriptService/Test.lua"
+  local myCoolClass = require(game.ReplicatedStorage.ModuleScript)
+
+  local myInstance = myCoolClass.new("Hello World!")
+
+  myInstance:PrintText()
+  ```
+
+  This should result in the output of `Hello World!` in the Output tab.
+
+  ### Overview
+  Here's a quick overview of the code that you've written:
+
+  ```lua filename="ReplicatedStorage/ModuleScript.lua"
+  local myCoolClass = {}
+  myCoolClass.__index = myCoolClass
+
+  function myCoolClass.new(string)
+    local self = setmetatable({}, myCoolClass)
+
+    self.Text = string
+
+    return self
+  end
+
+  function myCoolClass:PrintText()
+    print(self.Text)
+  end
+
+  return myCoolClass
+  ```
+
+  ```lua filename="ServerScriptService/Test.lua"
+  local myCoolClass = require(game.ReplicatedStorage.ModuleScript)
+
+  local myInstance = myCoolClass.new("Hello World!")
+
+  myInstance:PrintText()
+  ```
+
+  ### Conclusion
+
+  OOP is a very powerful tool that can be used to make your code more organized and easier to read, and become more friendly to other developers.
+
+  <sub>*Note:* You dont need OOP to create games, but it is a very good practice to use OOP since of how it makes life easier when doing things.</sub>
+</div>
+
+## You Should Ditch the old OOP Idiom
+[A new object-oriented programming idiom, and why you should ditch the old one!](https://devforum.roblox.com/t/a-new-object-oriented-programming-idiom-and-why-you-should-ditch-the-old-one/2070691) By [darmantinjr](https://devforum.roblox.com/u/darmantinjr)
+
+You would be asking, __"Why in the world would I ditch this OOP idiom you just taught me?"__. The reason being is that theres a few issues when using the old idiom of OOP.
+
+### Issue 1 - .new().new()
+`.new()` shouldn't be listed as a member of the object that you have already created. It wouldn't make sense of making a new instance of the object that you have already created.
+
+### Issue 2 - .__index
+`.__index` shown alot for type suggestions. Except we always see the `.__index` many times which can get annoying.
+
+### Issue 3 - No type inference when writing methods of class
+When typing the functionality of the class, no type suggestions would be given to you about the object that you are working with. Only the attributes from `__index` would be given to you. Everything else in `self` would be kept as a secret. 
+
+## Creating a Better OOP Module
+<div className="steps-container">
+  *Skipping steps 1 & 2*
+
+  ### Redefining the class layout
+  To solve the first issue we would write this code below
+
+  ```lua {1-4} filename="ReplicatedStorage/ModuleScript.lua"
+  local myCoolClass = {}
+  myCoolClass.constructors = {} -- Can be .interface
+  myCoolClass.methods = {} -- Can be .schema
+  myCoolClass.metatable = { __index = myCoolClass.methods }
+  ```
+
+  We have split the class into three different subcategories.
+
+  __constructors__ - This is where all of the constructor functions would be placed in. aka `myCoolClass.new()`. This is exposed to the user when they first required the module. No methods would be shown from type suggestions except for the constructor function(s).
+  
+  __methods__ - This is where all of the methods would be placed in. aka `myCoolClass:PrintText()`. This contains all of the `.__index` initialized objects such as `methods`, `common values`, `etc`. The constructor in the constructors table would return an object that has access to all of the members of its table. In type suggestions it would show you the methods, values, or etc of that object you've created.
+
+  __metatable__ - Using `self = setmetatable({}, {__index = myCoolClass.methods})` can cause a performance overhead when youre creating a new metatable on each construct, so defining it on the root of the code would define it once and can be reused multiple times. Fixing the performance overhead, and issue #2
+
+  ### Creating a new constructor
+  Creating a new constructor is a bit different but not too much to the point its unknown territory. The only difference is that we would be using the `constructors` table instead of the `myCoolClass` table.
+
+  ```lua {6-12} filename="ReplicatedStorage/ModuleScript.lua"
+  local myCoolClass = {}
+  myCoolClass.constructors = {}
+  myCoolClass.methods = {}
+  myCoolClass.metatable = { __index = myCoolClass.methods }
+
+  function myCoolClass.constructors.new(string)
+    local self = setmetatable({}, myCoolClass.metatable)
+
+    self.Text = string
+
+    return self
+  end
+  ```
+
+  This would also fix issue #1 since the methods and constructors are separated into different tables. Now this would give back all the methods that object contains, and the constructor be not infered as part of the object.
+
+  ### Making a new method
+  You can tell this is going to be different when making a new method
+
+  We would be using the `.` and not the `:` operator when defining the method. Reason being is that we want to explicitly define `self` so when using values in `self` we would get some type suggestions.
+
+  ```lua {14-16} filename="ReplicatedStorage/ModuleScript.lua"
+  local myCoolClass = {}
+  myCoolClass.constructors = {}
+  myCoolClass.methods = {}
+  myCoolClass.metatable = { __index = myCoolClass.methods }
+
+  function myCoolClass.constructors.new(string)
+    local self = setmetatable({}, myCoolClass.metatable)
+
+    self.Text = string
+
+    return self
+  end
+
+  function myCoolClass.methods.PrintText(self: myCoolClass)
+    print(self.Text)
+  end
+  ```
+
+  ### Adding a type 
+  We would need to make a `type` for the module since its going to yell at you for the code when you did self: myCoolClass. We would need to make a type for the `myCoolClass` so that it can be used in the method.
+
+  ```lua {18} filename="ReplicatedStorage/ModuleScript.lua"
+  local myCoolClass = {}
+  myCoolClass.constructors = {}
+  myCoolClass.methods = {}
+  myCoolClass.metatable = { __index = myCoolClass.methods }
+
+  function myCoolClass.constructors.new(string)
+    local self = setmetatable({}, myCoolClass.metatable)
+
+    self.Text = string
+
+    return self
+  end
+
+  function myCoolClass.methods.PrintText(self: myCoolClass)
+    print(self.Text)
+  end
+
+  type myCoolClass = typeof(myCoolClass.constructors.new(table.unpack(...)))
+  ```
+
+  You would be wondering whats with the `table.unpack(...)` <sub>Totally not ctrl c and v from the post to explain why</sub> This is because you will get a warning in your script editor when you do not explicitly define each individual required argument expected to be passed to the constructor. You can manually define these by hand, or use `table.unpack(...)` as a shortcut to handle the error.
+
+  ### Finalizing the module
+  The last line you are going to add is the return statement. This is where you would return the constructors table so that the user can use the constructors to create new objects. If you just returned `myCoolClass` then the user would be able to access the methods table and the metatable table which is not what we want.
+
+  ```lua {20} filename="ReplicatedStorage/ModuleScript.lua"
+  local myCoolClass = {}
+  myCoolClass.constructors = {}
+  myCoolClass.methods = {}
+  myCoolClass.metatable = { __index = myCoolClass.methods }
+
+  function myCoolClass.constructors.new(string)
+    local self = setmetatable({}, myCoolClass.metatable)
+
+    self.Text = string
+
+    return self
+  end
+
+  function myCoolClass.methods.PrintText(self: myCoolClass)
+    print(self.Text)
+  end
+
+  type myCoolClass = typeof(myCoolClass.constructors.new(table.unpack(...)))
+
+  return myCoolClass.constructors
+  ```
+
+  ### Using the new and improved class
+  Now that we have created the new and improved class, we can now use it in our code.
+
+  You will notice when typing this code is that none of the three issues listed above are present. You will start seeing type suggestions for the constructor, and the methods. You will also get type suggestions for the values that are in the object.
+
+  ```lua {1-5} filename="ServerScriptService/Test.lua"
+  local myCoolClass = require(game.ReplicatedStorage.ModuleScript)
+
+  local myObject = myCoolClass.new("Hello World!")
+
+  myObject:PrintText()
+  ```
+
+  You should get an expected output of `Hello World!` in the output window.
+
+  ### Overview
+  Heres a quick overview of the code we have written so far.
+
+  ```lua filename="ReplicatedStorage/ModuleScript.lua"
+  local myCoolClass = {}
+  myCoolClass.constructors = {}
+  myCoolClass.methods = {}
+  myCoolClass.metatable = { __index = myCoolClass.methods }
+
+  function myCoolClass.constructors.new(string)
+    local self = setmetatable({}, myCoolClass.metatable)
+
+    self.Text = string
+
+    return self
+  end
+
+  function myCoolClass.methods.PrintText(self: myCoolClass)
+    print(self.Text)
+  end
+
+  type myCoolClass = typeof(myCoolClass.constructors.new(table.unpack(...)))
+
+  return myCoolClass.constructors
+  ```
+
+  ```lua filename="ServerScriptService/Test.lua"
+  local myCoolClass = require(game.ReplicatedStorage.ModuleScript)
+
+  local myObject = myCoolClass.new("Hello World!")
+
+  myObject:PrintText()
+  ```
+</div>
+
+## Summary and Conclusion
+OOP is one of the most useful methods of programing in Lua. It allows you to create objects that can be used in your code. It also allows you to create a more organized code base.
+
+A crazy good tool to have in your arsenal when you are writing code in Lua. 10/10 would recomend to anyone who does coding in Roblox or off-platform.

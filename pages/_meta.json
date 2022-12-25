@@ -1,15 +1,21 @@
 {
-  "index": "Introduction",
-  "another": "Another Page",
-  "advanced": "Advanced (A Folder)",
-  "about": {
-    "title": "About",
+  "index": {
+    "title": "Home",
     "type": "page"
   },
-  "contact": {
-    "title": "Contact ↗",
-    "type": "page",
-    "href": "https://twitter.com/shuding_",
-    "newWindow": true
+
+  "contacts": {
+    "title": "Contact Me",
+    "type": "page"
+  },
+
+  "tutorials": {
+    "title": "Tutorials & Examples",
+    "type": "page"
+  },
+
+  "services": {
+    "title": "Roblox Services Explained",
+    "type": "page"
   }
 }
