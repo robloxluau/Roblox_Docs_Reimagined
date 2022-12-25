@@ -1,3 +1,211 @@
-# go figure them out loser
+import { Callout } from 'nextra-theme-docs'
 
-<img src='https://media.tenor.com/xf3QERSXtE4AAAAM/nerd.gif'></img>
+# Metamethods
+
+## Summary
+Metamethods in Lua are functions that are called when a certain operation is performed on a table/userdata. An example would be the __add metamethod, which is called when the + operator is used on a table. The __add metamethod is called with the two tables as arguments, and the return value is the result of the operation.
+
+__A quick example of a `__add` metamethods__
+```lua filename="ServerScriptService/__add.lua"
+local table1 = {1, 2, 3}
+local table2 = {4, 5, 6}
+local mt = {
+    __add = function(t1, t2)
+        local result = {}
+        for i = 1, #t1 do
+            result[i] = t1[i] + t2[i]
+        end
+        return result
+    end
+}
+setmetatable(table1, mt) -- Set the metatable of table1 to mt
+
+local table3 = table1 + table2 -- This will call the __add metamethod
+
+print(table3) -- {5, 7, 9}
+```
+
+## All of the Existing Metamethods
+| Metamethod | Description |
+| :--- | :--- |
+| `__index(table, index)` | Fires when table[index] is indexed. If the table[index] is nil, it can be set to another table which would be indexed instead. You will see this most commonly in OOP |
+| `__newindex(table, index, value)` | Fires when table[index] is set to value. This is used to prevent the user from setting values to a table, or be set to another table. |
+| `__add(table1, table2)` | The `+` addition operator |
+| `__sub(table1, table2)` | The `-` subtraction operator |
+| `__mul(table1, table2)` | The `*` multiplication operator |
+| `__div(table1, table2)` | The `/` division operator |
+| `__mod(table1, table2)` | The `%` modulo operator |
+| `__pow(table1, table2)` | The `^` exponentiation operator |
+| `__unm(table)` | The `-` unary minus operator |
+| `__len(table)` | The `#` length operator |
+| `__eq(table1, table2)` | The `==` equality operator |
+| `__lt(table1, table2)` | The `<` less than operator |
+| `__le(table1, table2)` | The `<=` less than or equal to operator |
+| `__concat(table1, table2)` | Fires when the `..` concatenation operator is used on the table |
+| `__call(table, ...)` | Fires when the table is called like a function. The ... are the arguements that were passed into the table-function thing |
+| `__tostring(table)` | Fires when the table is used in a `tostring()` operator |
+| `__metatable` | This is the metatable of the metatable. This is used to prevent the user from changing the metatable of a table. |
+
+## Using Metamethods
+
+`__index` is a metamethod commonly used in OOP. An example of a class would be:
+
+```lua filename="ServerScriptService/__index.lua"
+local Class = {}
+Class.__index = Class
+
+function Class.new()
+    local self = setmetatable({}, Class)
+    self.Value = 0
+    return self
+end
+
+function Class:Increment()
+    self.Value += 1
+end
+
+return Class
+```
+
+*You can [learn more about classes/OOP here](/tutorials/object-oriented-programing)*
+
+---
+
+`__unm` is used when you put a negitive sign before a table. An example of this would be:
+
+```lua filename="ServerScriptService/__unm.lua"
+local table = {1, 2, 3}
+local mt = {
+    __unm = function(t)
+        local result = {}
+        for i = 1, #t do
+            result[i] = -t[i]
+        end
+        return result
+    end
+}
+setmetatable(table, mt)
+
+print(-table) -- {-1, -2, -3}
+```
+
+If you want more examples, [check out the official Lua documentation](https://www.lua.org/manual/5.1/manual.html#2.8)
+
+## Rawset, Rawget, and Rawequal
+
+`Rawset`, `Rawget`, and `Rawequal` are functions that are used to prevent stack overflows. They can set, get, or equal tables without calling the methods `__index`, `__newindex`, or `__eq`. An example of these would be this following code:
+
+```lua filename="ServerScriptService/rawset.lua"
+local table = {1, 2, 3}
+local mt = {
+    __newindex = function(t, i, v)
+        rawset(t, i, v)
+    end
+}
+setmetatable(table, mt)
+
+table[1] = 4
+print(table[1]) -- {1, 2, 3, 4}
+```
+
+```lua filename="ServerScriptService/rawget.lua"
+local table = {1, 2, 3}
+local mt = {
+    __index = function(t, i)
+        return rawget(t, i)
+    end
+}
+setmetatable(table, mt)
+
+print(table[1]) -- 1
+```
+
+```lua filename="ServerScriptService/rawequal.lua"
+local table1 = {1, 2, 3}
+local table2 = {1, 2, 3}
+local mt = {
+    __eq = function(t1, t2)
+        return rawequal(t1, t2)
+    end
+}
+setmetatable(table1, mt)
+setmetatable(table2, mt)
+
+print(table1 == table2) -- false
+print(table1 == table1) -- true
+print(table2 == table2) -- true
+```
+
+You think that `rawequal({1,2,3}, {1,2,3})` is true, but its not. The reason why is that the two table objects are different. The values are the same, but they are very much different objects. If you want to make a table equal to another table, follow this code example:
+
+```lua filename="ServerScriptService/rawequal.lua"
+local table1 = {1, 2, 3}
+local table2 = {1, 2, 3}
+local mt = {
+    __eq = function(t1, t2)
+        for i = 1, #t1 do
+            if t1[i] ~= t2[i] then
+                return false
+            end
+        end
+        return true
+    end
+}
+setmetatable(table1, mt)
+
+print(table1 == table2) -- true
+```
+
+## Additional Methods
+Grabbed [from the roblox docs](https://create.roblox.com/docs/scripting/luau/metatables#basic-methods) <sub>was too lazy to rewrite it</sub>
+
+### Union / Addition Metamethod
+When writing a OOP class, you can do metamethods like `Class:__add(otherClass)` to add the two classes/tables together.
+
+ExampleCode:
+```lua filename="ServerScriptService/union.lua"
+-- In ModuleScript
+function Class:__add(otherClass)
+    local newClass = Class.new()
+    newClass.Value = self.Value + otherClass.Value
+    return newClass
+end
+
+-- In Script
+local class1 = Class.new(1)
+local class2 = Class.new(2)
+
+local class3 = class1 + class2
+
+print(class3.Value) -- 3
+```
+
+### Subtraction Metamethod
+This is the same as the union metamethod, but instead of adding the two classes, it subtracts them using this `Class:__sub(otherClass)`.
+
+ExampleCode:
+```lua filename="ServerScriptService/subtraction.lua"
+-- In ModuleScript
+function Class:__sub(otherClass)
+    local newClass = Class.new()
+    newClass.Value = self.Value - otherClass.Value
+    return newClass
+end
+
+-- In Script
+local class1 = Class.new(1)
+local class2 = Class.new(2)
+
+local class3 = class1 - class2
+
+print(class3.Value) -- -1
+```
+
+<Callout type='info'>
+  You can use other metamethods in classes. You aren't restricted to just `__add` and `__sub`. Try out `Class:__eq()` or `Class:__tostring()`!
+</Callout>
+
+## Conclusion
+Metamethods are a very useful tool in Lua. They can be used to make your code more efficient, or just to make your code look better. If you want to learn more about metamethods, [check out the official Lua documentation](https://www.lua.org/manual/5.1/manual.html#2.8) or [check out the Roblox Lua documentation](https://developer.roblox.com/en-us/api-reference/lua-docs).
+
+If you want to learn more about OOP, [check out the OOP tutorial that I made](/tutorials/object-oriented-programing).
