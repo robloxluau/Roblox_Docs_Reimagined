@@ -1,0 +1,5 @@
+newIssueWelcomeComment: >
+  Thanks for opening this issue! A maintainer will get back to you shortly.
+
+newPRWelcomeComment: >
+  Thanks for opening this pull request! A maintainer will get back to you shortly.
