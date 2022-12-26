@@ -29,7 +29,7 @@ print(raycastResult)
   `part.CFrame.lookVector * 100` is getting the Vector3 of wheres the part is looking at, then multiplying it by 100 to move that lookVector by 100 studs. If you want the raycast go to a spicfic end point, you can do `endPoint - orgin` to get the direction to the end point Vector3.
 </Callout>
 
-This code will print out the raycast result from orgin to the end point. The raycast result is a table with the following properties:
+This code here is basically defining the origin `start position`, direction `direction of the beam`, and using those to raycast the beam. The result of the raycast is stored in `raycastResult`. If you print it, you will get a table of information about the raycast.
 
 | Property | Description |
 | :-- | :-- |
@@ -51,6 +51,8 @@ local prams = RaycastParams.new()
 prams.FilterType = Enum.RaycastFilterType.Whitelist -- You can do Blacklist to do the opposite
 prams.FilterDescendantsInstances = { workspace:WaitForChild('Parts') }
 ```
+
+This here is using an `Enum.RaycastFilterType` of `Whitelist` to only hit the parts that are in the `Parts` folder/model. You can also use `Blacklist` to hit everything except the parts in the `Parts` folder/model. Other properties in RaycastParams are:
 
 | Property | Description |
 | :-- | :-- |
@@ -77,4 +79,4 @@ local raycastResult = workspace:Raycast(orgin, direction, prams)
 print(raycastResult)
 ```
 
-This code will now only hit the parts that are not in the Glass folder/model nor water.
+Stiching together the raycast with prams, we can create a "laser" beam that goes through glass, and water, but will stop at parts/baseparts.
