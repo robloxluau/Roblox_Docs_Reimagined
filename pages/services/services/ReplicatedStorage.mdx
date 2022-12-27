@@ -1,0 +1,61 @@
+# Replicated Storage
+
+## Introduction
+
+Welcome to Replicated Storage! You'll be using this service a lot throughout your game-development journey.
+
+## Description
+
+Replicated Storage is a service that allows you to store data that can be accessed by both the client and the server. This is useful for storing data that you want to be accessible by both the client and the server, such as a player's inventory.
+
+Things in ReplicatedStorage can be changed locally on the client while they can be changed for everyone on the server. Take for example:
+
+```lua ServerScriptService/ServerPart.lua
+    local ReplicatedStorage = game:GetService("ReplicatedStorage")
+    
+    local Object = ReplicatedStorage:WaitForChild("Object")
+
+    Object.Value = "Changed on the server"
+    
+    print(Object.Value) -- prints "Changed on the server"
+```
+
+```lua StarterPlayerScripts/ClientPart.lua
+    local ReplicatedStorage = game:GetService("ReplicatedStorage")
+    
+    local Object = ReplicatedStorage:WaitForChild("Object")
+
+    Object.Value = "Changed on the client"
+
+    print(Object.Value) -- prints "Changed on the client"
+```
+
+If we were to test this in studio and printed the value, then we would see that the it will change for everyone on the server but only for the Player that changed it on the client.
+
+### Example
+
+```lua ReplicatedStorage/ReplicatedStorage.lua
+    local ReplicatedStorage = game:GetService("ReplicatedStorage")
+    local Players = game:GetService("Players")
+
+    local LocalPlayer = Players.LocalPlayer
+
+    local PlayerData = require(ReplicatedStorage:WaitForChild("PlayerData"))
+    local PlayerInventory = PlayerData:GetInventory(LocalPlayer.Name)
+    
+    -- do something with the player's inventory
+```
+
+You see when a module is palced and required in ReplicatedStorage, it can be accessed by both the client and the server. While if you place a module in ServerScriptService, and require it from the client, it won't work and vice-versa.
+
+## Retrieving the service
+
+```lua ReplicatedStorage/ReplicatedStorage.lua
+    local ReplicatedStorage = game:GetService("ReplicatedStorage")
+    -- or you can do
+    local ReplicatedStorage = game.ReplicatedStorage
+```
+
+## Uses
+
+As previously mentioned, ReplicatedStorage is paramount for client-server communication. You can use it to store data that you want to be accessible by both the client and the server. Most RemoteEvents, RemoteFunctions, and Modules are placed in ReplicatedStorage so they can be accessed by both the client and the server.

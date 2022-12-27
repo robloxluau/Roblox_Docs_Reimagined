@@ -1,6 +1,6 @@
 {
   "index": {
-    "title": "Home",
+    "title": "Landing",
     "type": "page"
   },
 
@@ -15,7 +15,17 @@
   },
 
   "services": {
-    "title": "Roblox Services Explained",
+    "title": "Roblox Services",
+    "type": "page"
+  },
+
+  "projects": {
+    "title": "Projects",
+    "type": "page"
+  },
+
+  "classes": {
+    "title": "Classes",
     "type": "page"
   }
 }
