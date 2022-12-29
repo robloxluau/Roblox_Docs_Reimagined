@@ -1,0 +1,76 @@
+import { Callout } from 'nextra-theme-docs'
+
+<Callout type='error' emoji=''>
+  In-development / writing
+</Callout>
+
+# Pathfinding
+
+## Summary
+Roblox pathfinding service allows you to draw points which can go from `point a` to `point b` in the fastest way possible.
+
+## Moving a Character
+<div className="steps-container">
+  ### Creating a path
+  Creating a path from `point a` to `point b` if very simple, but we need to set some rules for the pathfinding AI to follow.
+
+  #### Path's Agent Prameters
+  | Parameter | Type | Defualt | Description |
+  | --- | --- | --- | --- |
+  | AgentRadius | integer | 2 | The minimum amount horizontal space required for empty space considered traversable. |
+  | AgentHeight | integer | 5 | The minimum amount of vertical space required for empty space to be considered traversable. |
+  | AgentCanJump | boolean | true | Determins whether jumping is allowed |
+  | AgentCanClimb | boolean | false | Determins whether climbing is allowed |
+  | WaypointSpacing | number | 4 | Determins the spacing between intermediate waypoints in path. <sub> Copied from roblox docs </sub> |
+  | Costs | table | `{ }` | Table of materials or defined `Class.PathfindingModifier/PathfindingModifiers` and their "cost" for traversal. Useful for making the agent prefer certain materials/regions over others. See here for details. <sub> Copied from roblox docs </sub> |
+
+  ```lua {1-8} filename="ServerScriptService/Pathfinding.lua"
+  local PathfindingService = game:GetService("PathfindingService")
+
+  local path = PathfindingService:CreatePath({
+    AgentRadius = 3,
+    AgentHeight = 6,
+    AgentCanClimb = true,
+    Costs = { Water = 20 }
+  })
+  ```
+
+  ### Finding a path / Calculating a path
+  To calculate a path, you would call the method `:FindPathAsync`. This will yeild your code until the path is found. It requires a `start: Vector3` and `finish: Vector3` as its args.
+
+  ```lua {10} filename="ServerScriptService/Pathfinding.lua"
+  local PathfindingService = game:GetService("PathfindingService")
+
+  local path = PathfindingService:CreatePath({
+    AgentRadius = 3,
+    AgentHeight = 6,
+    AgentCanClimb = true,
+    Costs = { Water = 20 }
+  })
+
+  local pathObject = path:FindPathAsync(Vector3.new(0, 0, 0), Vector3.new(31, 0, 24))
+  ```
+
+  ### Moving the character
+  To start moving the character, you would need to get the waypoints from the path object. You can do this by calling the method `:GetWaypoints()`. Then you can use the humanoid's `:MoveTo()` method to move the character to each waypoint.
+
+  ```lua {12-17} filename="ServerScriptService/Pathfinding.lua"
+  local PathfindingService = game:GetService("PathfindingService")
+
+  local path = PathfindingService:CreatePath({
+    AgentRadius = 3,
+    AgentHeight = 6,
+    AgentCanClimb = true,
+    Costs = { Water = 20 }
+  })
+
+  local pathObject = path:FindPathAsync(Vector3.new(0, 0, 0), Vector3.new(31, 0, 24))
+
+  local humanoid = script.Parent:WaitForChild("Humanoid") -- Lets say the script was in the model.
+
+  for _, waypoint in pairs(pathObject:GetWaypoints()) do
+    humanoid:MoveTo(waypoint.Position)
+    humanoid.MoveToFinished:Wait()
+  end
+  ```
+</div>

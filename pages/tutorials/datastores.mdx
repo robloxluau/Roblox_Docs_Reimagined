@@ -1,0 +1,291 @@
+import { Callout } from 'nextra-theme-docs'
+
+# Datastores
+
+## Summary
+Datastores are used in roblox games to help store data for players which can be grabbed or updated on the server side. You can use them to save how much gold they have, or how much experience they had obtained.
+
+__A full explination of the methods of datastores can be found here: [DataStoreService](/services/services/datastoreservice)__
+
+<Callout type='warning'>
+  This requires `Enable Studio Access to API Services` to be enabled in game settings. To enable, go to `Game Settings` and then `Secuirty` and then enable `Enable Studio Access to API Services`.
+</Callout>
+
+## Creating a Datastore
+<div className="steps-container">
+  ### Using DataStoreService
+  `DataStoreService` is a service that is used to create datastores. It is used to get a datastore with a name, and then you can use the datastore to get and set data. Heres how you would setup your server code:
+
+  ```lua {1-2} filename="ServerScriptService/DataStores.lua"
+  local DataStoreService = game:GetService("DataStoreService")
+  local DataStore = DataStoreService:GetDataStore("CoolDataStore")
+  ```
+
+  You would insert the datastore's name inside of `GetDataStore`'s parentheses. You can also use `GetOrderedDataStore` to get an ordered datastore. This is useful if you want to get the top 10 players with the most gold, or something like that, but for now we are focusing on unordered datastores.
+
+  ### Getting an player's data
+  Now that we have our datastore, we can get the data of a player. We can do this by using the `GetAsync` method. This method takes in a key, and returns the data that is stored in that key. Heres how you would get a player's data:
+
+  ```lua {1,5-11} filename="ServerScriptService/DataStores.lua"
+  local Players = game:GetService("Players")
+  local DataStoreService = game:GetService("DataStoreService")
+  local DataStore = DataStoreService:GetDataStore("CoolDataStore")
+
+  function PlayerAdded(player: Player)
+    local data = DataStore:GetAsync(player.UserId)
+
+    print(data)
+  end
+
+  Players.PlayerAdded:Connect(PlayerAdded)
+  ```
+
+  Now you will see that when it prints data, it going to print nil since nothing is inside of the datastore. This is because we haven't set any data yet. You can set data by using the `SetAsync` method.
+
+  ### Setting player's data
+  Now I am going to assume that you have made an `NumberValue` in the player instance, lets say `Gold`. To set the data we can use the `SetAsync` method, as said above, to set an player's data. It's arguments are a key and a value. Heres how you would set a player's data:
+
+  ```lua {11-13} filename="ServerScriptService/DataStores.lua"
+  local Players = game:GetService("Players")
+  local DataStoreService = game:GetService("DataStoreService")
+  local DataStore = DataStoreService:GetDataStore("CoolDataStore")
+
+  function PlayerAdded(player: Player)
+    local data = DataStore:GetAsync(player.UserId)
+
+    print(data)
+  end
+
+  function PlayerLeft(player: Player)
+    DataStore:SetAsync(player.UserId, player.Gold.Value)
+  end
+
+  Players.PlayerAdded:Connect(PlayerAdded)
+  Players.PlayerRemoving:Connect(PlayerLeft)
+  ```
+
+  What this will do is it would set the player's data to their gold value when they leave the game, and to see it in effect just rejoin the game and watch how it would print the gold value which was saved in the datastore.
+
+  ### Problem though...
+  The problem is that the `SetAsync` or `GetAsync` can error, but dont worry there a way to fix that. Its called `pcall`s! `pcall` is a function that takes in a function and returns a boolean and a value. If the function errors, it would return false and the error message, but if it doesn't error, it would return true and the value that the function returned. Heres how you would fix your code for pcalls:
+
+  ```lua {6-14,18-26} filename="ServerScriptService/DataStores.lua"
+  local Players = game:GetService("Players")
+  local DataStoreService = game:GetService("DataStoreService")
+  local DataStore = DataStoreService:GetDataStore("CoolDataStore")
+
+  function PlayerAdded(player: Player)
+    local success, data = pcall(function()
+      return DataStore:GetAsync(player.UserId)
+    end)
+
+    if success then
+      print(data)
+    else
+      warn(data)
+    end
+  end
+
+  function PlayerLeft(player: Player)
+    local success, data = pcall(function()
+      return DataStore:SetAsync(player.UserId, player.Gold.Value)
+    end)
+
+    if success then
+      print(data)
+    else
+      warn(data)
+    end
+  end
+
+  Players.PlayerAdded:Connect(PlayerAdded)
+  Players.PlayerRemoving:Connect(PlayerLeft)
+  ```
+
+  Horray!, now you have a datastore that works with pcall that can catch the errors. Except the pcall looks ugly, so lets make it look better.
+
+  ```lua {6-12,16-22} filename="ServerScriptService/DataStores.lua"
+  local Players = game:GetService("Players")
+  local DataStoreService = game:GetService("DataStoreService")
+  local DataStore = DataStoreService:GetDataStore("CoolDataStore")
+
+  function PlayerAdded(player: Player)
+    local success, data = pcall(DataStore.GetAsync, DataStore, player.UserId)
+
+    if success then
+      print(data)
+    else
+      warn(data)
+    end
+  end
+
+  function PlayerLeft(player: Player)
+    local success, data = pcall(DataStore.SetAsync, DataStore, player.UserId, player.Gold.Value)
+
+    if success then
+      print(data)
+    else
+      warn(data)
+    end
+  end
+
+  Players.PlayerAdded:Connect(PlayerAdded)
+  Players.PlayerRemoving:Connect(PlayerLeft)
+  ```
+
+  ### Now to set the data
+  Setting data is easy as putting 1 line in the `PlayerAdded` function. Heres how you would set the data:
+
+  ```lua {14} filename="ServerScriptService/DataStores.lua"
+  local Players = game:GetService("Players")
+  local DataStoreService = game:GetService("DataStoreService")
+  local DataStore = DataStoreService:GetDataStore("CoolDataStore")
+
+  function PlayerAdded(player: Player)
+    local success, data = pcall(DataStore.GetAsync, DataStore, player.UserId)
+
+    if success then
+      print(data)
+    else
+      warn(data)
+    end
+
+    player.Gold.Value = data
+  end
+
+  function PlayerLeft(player: Player)
+    local success, data = pcall(DataStore.SetAsync, DataStore, player.UserId, player.Gold.Value)
+
+    if success then
+      print(data)
+    else
+      warn(data)
+    end
+  end
+
+  Players.PlayerAdded:Connect(PlayerAdded)
+  Players.PlayerRemoving:Connect(PlayerLeft)
+  ```
+
+  Then if you want, you clean up the functions to do something more useful, and kicking the player if the data didn't load.
+
+  ```lua {8-13,19-23} filename="ServerScriptService/DataStores.lua"
+  local Players = game:GetService("Players")
+  local DataStoreService = game:GetService("DataStoreService")
+  local DataStore = DataStoreService:GetDataStore("CoolDataStore")
+
+  function PlayerAdded(player: Player)
+    local success, data = pcall(DataStore.GetAsync, DataStore, player.UserId)
+
+    if not success then
+      player:Kick("Failed to load data")
+      return
+    end
+
+    player.Gold.Value = data or 0 -- If the data is nil, then set it to 0
+  end
+
+  function PlayerLeft(player: Player)
+    local success, data = pcall(DataStore.SetAsync, DataStore, player.UserId, player.Gold.Value)
+
+    if not success then
+      warn('Data couldn\'t load', data)
+    else
+      print('Saved data!')
+    end
+  end
+
+  Players.PlayerAdded:Connect(PlayerAdded)
+  Players.PlayerRemoving:Connect(PlayerLeft)
+  ```
+
+  Horray! You've made a datastore that gets and saves data. Except 1 little issue. If the data wasn't able to load (Very Very small chance) and the player gets kickd, the PlayerLeft function can and will run since the `:Kick` makes the player leave the game. Meaning the data will be saved to 0 which is really bad if the player has a lot of gold. So lets fix that.
+
+  ### Fixing PlayerLeft issue
+  To fix this small little issue, we can use lists to check if the player left then in the `PlayerLeft` function, we can check weather if the player has left or not. This is so we can prevent the player's data to be set to nil or whatsoever value. Heres the nice solution:
+
+  ```lua {5,8-17,21-23} filename="ServerScriptService/DataStores.lua"
+  local Players = game:GetService("Players")
+  local DataStoreService = game:GetService("DataStoreService")
+  local DataStore = DataStoreService:GetDataStore("CoolDataStore")
+
+  local datasLoaded = {}
+
+  function PlayerAdded(player: Player)
+    local success, data = pcall(DataStore.GetAsync, DataStore, player.UserId)
+
+    if not success then
+      player:Kick("Failed to load data")
+      return
+    end
+
+    player.Gold.Value = data or 0 -- If the data is nil, then set it to 0
+
+    datasLoaded[player] = true
+  end
+
+  function PlayerLeft(player: Player)
+    if not datasLoaded[player] then
+      return
+    end
+
+    local success, data = pcall(DataStore.SetAsync, DataStore, player.UserId, player.Gold.Value)
+
+    if not success then
+      warn('Data couldn\'t load', data)
+    else
+      print('Saved data!')
+    end
+  end
+
+  Players.PlayerAdded:Connect(PlayerAdded)
+  Players.PlayerRemoving:Connect(PlayerLeft)
+  ```
+
+  Congrats! you have made a working datastore which can get & set player's Gold value. If you want to get a bit more fancy, you can use tables to store mutiple values, so you dont use multiple instances of different datastores. Heres a example:
+
+  ```lua filename="ServerScriptService/DataStoresWithTables.lua"
+  local Players = game:GetService("Players")
+  local DataStoreService = game:GetService("DataStoreService")
+  local DataStore = DataStoreService:GetDataStore("CoolDataStore")
+
+  local datasLoaded = {}
+
+  function PlayerAdded(player: Player)
+    local success, data = pcall(DataStore.GetAsync, DataStore, player.UserId)
+
+    if not success then
+      player:Kick("Failed to load data")
+      return
+    end
+
+    player.Gold.Value = data['Gold'] or 0 -- If the data is nil, then set it to 0
+    player.Water.Value = data['Water'] or 0
+
+    datasLoaded[player] = true
+  end
+
+  function PlayerLeft(player: Player)
+    if not datasLoaded[player] then
+      return
+    end
+
+    local success, data = pcall(DataStore.SetAsync, DataStore, player.UserId, {
+      Gold = player.Gold.Value,
+      Water = player.Water.Value
+    })
+
+    if not success then
+      warn('Data couldn\'t load', data)
+    else
+      print('Saved data!')
+    end
+  end
+
+  Players.PlayerAdded:Connect(PlayerAdded)
+  Players.PlayerRemoving:Connect(PlayerLeft)
+  ```
+</div>
+
+## Conclusion
+Thats it! Creating datastores may seem hard, but overall its just if player joined or player leave. Not much to do with the data really. You can learn more on the [Roblox Docs](https://create.roblox.com/docs/scripting/data/data-stores)
