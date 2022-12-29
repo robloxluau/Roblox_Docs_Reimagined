@@ -1,9 +1,0 @@
-{
-    "replicatedstorage": {
-        "title": "ReplicatedStorage"
-    },
-
-    "datastoreservice": {
-        "title": "DataStoreService"
-    }
-}
