@@ -18,6 +18,8 @@ First, run `pnpm i` to install the dependencies.
 
 Then, run `pnpm dev` to start the development server and visit localhost:3000.
 
+If you haven't installed `pnpm` yet, you can run `npm i -g pnpm` to install it.
+
 ## License
 
 This project is licensed under the MIT License.
