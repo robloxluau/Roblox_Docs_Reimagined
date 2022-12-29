@@ -1,3 +1,4 @@
 {
-  "index": "Tutorials"
+  "index": "Tutorials",
+  "---": { "type": "separator" }
 }
