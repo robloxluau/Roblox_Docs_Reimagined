@@ -1,5 +1,4 @@
 {
-  "replicatedstorage": "ReplicatedStorage",
-  "datastoreservice": "DataStoreService",
-  "pathfindingservice": "PathfindingService"
+    "replicatedstorage": "ReplicatedStorage",
+    "datastoreservice": "DataStoreService"
 }
