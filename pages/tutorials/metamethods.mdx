@@ -45,6 +45,7 @@ print(table3) -- {5, 7, 9}
 | `__call(table, ...)` | Fires when the table is called like a function. The ... are the arguements that were passed into the table-function thing |
 | `__tostring(table)` | Fires when the table is used in a `tostring()` operator |
 | `__metatable` | This is the metatable of the metatable. This is used to prevent the user from changing the metatable of a table. |
+| `__iter(self)` | Overrides default generalized iteration behavior. Should return a function that acts as the iterator function. |
 
 ## Using Metamethods
 
