@@ -38,7 +38,7 @@ print(table3) -- {5, 7, 9}
 | `__pow(table1, table2)` | The `^` exponentiation operator |
 | `__unm(table)` | The `-` unary minus operator |
 | `__len(table)` | The `#` length operator |
-| `__eq(table1, table2)` | The `==` equality operator |
+| `__eq(table1, table2)` | The `==` equality operator, also overloads `~=` and inverts the return of the function. |
 | `__lt(table1, table2)` | The `<` less than operator |
 | `__le(table1, table2)` | The `<=` less than or equal to operator |
 | `__concat(table1, table2)` | Fires when the `..` concatenation operator is used on the table |
@@ -89,6 +89,55 @@ setmetatable(table, mt)
 
 print(-table) -- {-1, -2, -3}
 ```
+
+`__eq` overloads `==` and `~=`, when `~=` is used, the return of the function is inverted
+
+```lua filename="ServerScriptService__eqAnd__neq.lua
+local function Vector(x, y)
+  local vec = {}
+  vec.X = x
+  vec.Y = y
+
+  return setmetatable(vec, {
+    __eq = function(self, rhs)
+      return self.X == rhs.X and self.Y == rhs.Y
+    end 
+  }
+end
+
+print(Vector(5, 9) == Vector(5, 9)) --> true
+print(Vector(5, 9) == Vector(0, 0)) --> false
+print(Vector(5, 9) ~= Vector(0, 0)) --> true
+```
+
+`__lt` and `__le` are used to overload `<` and `<=` respectively.
+
+```lua filename="ServerScriptService__ltAnd__le.lua
+local function Vector(x, y)
+  local vec = {}
+  vec.X = x
+  vec.Y = y
+
+  return setmetatable(vec, {
+    __lt = function(self, rhs)
+      return self.X < rhs.X and self.Y < rhs.Y
+    end,
+    
+    __le = function(self, rhs)
+      return self.X <= rhs.X and self.Y < rhs.Y
+    end
+  }
+end
+
+print(Vector(5, 9) < Vector(5, 9)) --> false
+print(Vector(5, 9) <= Vector(5, 9)) --> true
+print(Vector(0, 0) < Vector(5, 9)) --> true
+```
+
+<Callout type='info'>
+  The `__lt` and `__le` metamethods will always invoke on the left-hand side's object. Meaning, for example, `a > b` will fire the `b`'s `__lt` metamethod. The function between both metatables must match.
+</Callout>
+
 
 If you want more examples, [check out the official Lua documentation](https://www.lua.org/manual/5.1/manual.html#2.8)
 
